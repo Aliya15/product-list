@@ -14,13 +14,26 @@ const config = {
   },
 
   entry: {
-    main: ['./src/js/scripts.js', './src/scss/styles.scss'],
+    main: ['./scripts.js', './styles.scss'],
   },
+
+  context: path.resolve(__dirname, 'src'),
 
   output: {
     chunkFilename: 'js/[name].js',
     filename: 'js/[name].js',
     path: path.resolve(__dirname, 'static')
+  },
+
+  devServer: {
+    static: {
+      directory: path.join(__dirname, 'src'),
+    },
+    hot: true,
+    server: 'http',
+    historyApiFallback: true,
+    compress: true,
+    port: 9000,
   },
 
   plugins: [
@@ -36,7 +49,7 @@ const config = {
     }),
     new CopyPlugin([
       {
-        from: 'src/images',
+        from: '/images',
         to: 'img',
         test: /\.(jpe?g|png|gif|svg)$/i,
         force: true
