@@ -1,0 +1,32 @@
+@import "src/assets/styles/mixins/mixins";
+
+.product-list {
+  &__header {
+    @include border('top');
+    @include border('bottom');
+
+    height: 22px;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    padding: 10px 0;
+
+    &__title {
+      @include text-body-small-bold;
+      margin-right: 15px;
+      cursor: default;
+    }
+
+    &__item {
+      @include text-body-small;
+      @include border('left');
+      display: flex;
+      align-items: center;
+      padding: 0 17px;
+
+      &:last-child {
+        padding-right: 0;
+      }
+    }
+  }
+}

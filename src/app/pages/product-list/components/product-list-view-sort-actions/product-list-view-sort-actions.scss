@@ -1,0 +1,41 @@
+@import "./src/assets/styles/mixins/mixins";
+
+.action-block__item {
+
+  &__title {
+    @include text-body-small;
+    margin-right: 3px;
+    cursor: default;
+  }
+
+  &__button {
+    @include text-body-small-bold;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding-right: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+
+    .arrow {
+      margin: 0;
+      border: solid $text-body;
+      border-width: 0 2px 2px 0;
+      display: inline-block;
+      padding: 3px;
+      font-size: 16px;
+      line-height: 22px;
+    }
+
+    .down {
+      transform: rotate(45deg);
+      -webkit-transform: rotate(45deg);
+    }
+
+    .up {
+      transform: rotate(-135deg);
+      -webkit-transform: rotate(-135deg);
+    }
+  }
+}
