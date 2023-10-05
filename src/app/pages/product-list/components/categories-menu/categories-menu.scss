@@ -1,0 +1,29 @@
+@import "../../../../../assets/styles/mixins/mixins";
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  gap: 15px;
+
+  &__title {
+    @include text-heading;
+    margin: 0;
+    cursor: default;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+
+    &__item {
+      @include text-body-large;
+      cursor: pointer;
+
+      &:first-letter {
+        text-transform: capitalize;
+      }
+    }
+  }
+}
