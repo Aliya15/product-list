@@ -1,0 +1,12 @@
+@import "../../../../../assets/styles/mixins/mixins";
+
+.product-list {
+  width: 83%;
+
+  &__block {
+    margin: 30px 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px 29px;
+  }
+}
