@@ -1,5 +1,3 @@
-This project has been created using **webpack scaffold**, you can now run
-
 Install packages
 ```
 npm run install
@@ -12,4 +10,10 @@ npm run build
 or
 ```
 npm run watch
+```
+
+to run your application
+
+```
+npm run dev
 ```
