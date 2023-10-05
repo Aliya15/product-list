@@ -1,43 +1,110 @@
 const path = require('path');
-const webpack = require('webpack');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ScriptExtHtmlWebpackPlugin = require("script-ext-html-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserPlugin = require('terser-webpack-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
-const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin');
 
-
-const config = {
-  resolve: {
-    modules: ['node_modules'],
-    extensions: [ '.tsx', '.ts', '.js', '.jsx', '...'],
-  },
-
-  entry: {
-    main: ['./scripts.js', './styles.scss'],
-  },
-
-  context: path.resolve(__dirname, 'src'),
-
+module.exports = {
+  entry: [
+    './scripts.js'
+  ],
   output: {
     chunkFilename: 'js/[name].js',
     filename: 'js/[name].js',
     path: path.resolve(__dirname, 'static')
   },
-
+  context: path.resolve(__dirname, 'src'),
   devServer: {
     static: {
       directory: path.join(__dirname, 'src'),
     },
-    hot: true,
-    server: 'http',
-    historyApiFallback: true,
-    compress: true,
     port: 9000,
   },
+  optimization: {
+    minimizer: [new TerserPlugin()],
 
+    splitChunks: {
+      chunks: 'async',
+      minSize: 20000,
+      minRemainingSize: 0,
+      minChunks: 1,
+      maxAsyncRequests: 30,
+      maxInitialRequests: 30,
+      enforceSizeThreshold: 50000,
+      cacheGroups: {
+        defaultVendors: {
+          test: /[\\/]node_modules[\\/]/,
+          priority: -10,
+          reuseExistingChunk: true,
+        },
+        default: {
+          minChunks: 2,
+          priority: -20,
+          reuseExistingChunk: true,
+        },
+      },
+    },
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(scss|css)$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader
+          },
+          'css-loader',
+          'sass-loader',
+          'postcss-loader'],
+      },
+      {
+        test: /\.html$/i,
+        loader: "html-loader",
+      },
+      // images & files
+      {
+        test: /\.(png|jpg|jpeg|gif|svg)$/i,
+        loader: 'file-loader',
+        options: {
+          outputPath: 'assets'
+        }
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        type: 'assets',
+        generator: {
+          filename: 'fonts/[name][ext][query]'
+        }
+      },
+      {
+        test: /\.(?:js|mjs|cjs)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              ['@babel/preset-env', { targets: "defaults" }]
+            ],
+          }
+        }
+      },
+    ]
+  },
   plugins: [
-    new webpack.ProgressPlugin(),
+    new HtmlWebpackPlugin({
+      template: '/index.html',
+      minify: {
+        collapseWhitespace: true,
+        keepClosingSlash: false,
+        removeComments: true,
+        removeRedundantAttributes: true,
+        removeScriptTypeAttributes: true,
+        removeStyleLinkTypeAttributes: true,
+        useShortDoctype: true
+      }
+    }),
     new CleanWebpackPlugin({
       cleanAfterEveryBuildPatterns: [
         'css/**/*',
@@ -45,104 +112,11 @@ const config = {
       ]
     }),
     new MiniCssExtractPlugin({
-      filename: 'css/[name].css'
+      filename: '[name].css'
     }),
-    new CopyPlugin([
-      {
-        from: '/images',
-        to: 'img',
-        test: /\.(jpe?g|png|gif|svg)$/i,
-        force: true
-      },
-    ]),
-    new ImageMinimizerPlugin({
-      minimizerOptions: {
-        plugins: [
-          ['gifsicle', { interlaced: true }],
-          ['jpegtran', { progressive: true }],
-          ['optipng', { optimizationLevel: 5 }],
-          [
-            'svgo',
-            {
-              plugins: [
-                {
-                  removeViewBox: false,
-                }
-              ]
-            }
-          ]
-        ]
-      }
+    // inline js
+    new ScriptExtHtmlWebpackPlugin({
+      inline: ["scripts.js"]
     })
   ],
-
-  module: {
-    rules: [
-      {
-        test: /\.(jpe?g|png|gif|svg)$/i,
-        use: [
-          {
-            loader: "file-loader",
-            options: {
-              name: '[path][name].[ext]',
-              outputPath: '../img/'
-            }
-          }
-        ]
-      },{
-        test: /.(js|jsx)$/,
-        loader: 'babel-loader',
-        include: [
-          path.resolve(__dirname, 'src/js')],
-
-      }, {
-        test: /.(scss|css)$/,
-
-        use: [
-          {
-            loader: MiniCssExtractPlugin.loader
-          }, {
-            loader: "css-loader",
-
-            options: {
-              sourceMap: true,
-              url: false
-            }
-          }, {
-            loader: "sass-loader",
-
-            options: {
-              sourceMap: true
-            }
-          }
-        ]
-      }
-    ]
-  },
-
-  optimization: {
-    minimizer: [new TerserPlugin()],
-
-    splitChunks: {
-      cacheGroups: {
-        vendors: {
-          priority: -10,
-          test: /[\\/]node_modules[\\/]/
-        }
-      },
-
-      chunks: 'async',
-      minChunks: 1,
-      minSize: 30000,
-      name: true
-    }
-  }
-}
-
-module.exports = (env, argv) => {
-  if (argv.mode === 'development') {
-    config.devtool = 'source-map';
-  }
-
-  return config;
 };
