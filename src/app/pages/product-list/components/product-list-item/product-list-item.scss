@@ -1,0 +1,68 @@
+@import "../../../../../assets/styles/mixins/mixins";
+@import "../../../../../assets/styles/variables/colors";
+
+.product {
+  @include border('bottom');
+  height: 476px;
+  width: 258px;
+  gap: 15px;
+  display: flex;
+  flex-direction: column;
+
+  &__image {
+    height: 250px;
+    width: 258px;
+    object-fit: contain;
+  }
+
+  &__information {
+    display: flex;
+    flex-direction: column;
+    min-height: 133px;
+    gap: 10px;
+    padding: 0 10px;
+
+    &__title {
+      @include text-product-title;
+      @include text-ellipsis(2);
+      cursor: default;
+    }
+
+    &__description {
+      @include text-body-small;
+      @include text-ellipsis(4);
+
+      cursor: default;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+
+    &__title {
+      @include text-price;
+      cursor: default;
+    }
+
+    &__button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border: none;
+      border-radius: 50px;
+      background-color: $green-actions;
+      cursor: pointer;
+
+      &:hover {
+        opacity: 85%;
+      }
+    }
+
+  }
+
+}
